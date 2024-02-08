@@ -26,6 +26,7 @@
 
         // Function to process the response and extract data
         function processData(data) {
+            console.log("Raw data:", data); // Log the raw data
             var lines = data.split("\n");
             var jsonData = [];
 
@@ -40,6 +41,8 @@
                     status: status
                 });
             });
+
+            console.log("Parsed JSON data:", jsonData); // Log the parsed JSON data
 
             return JSON.stringify(jsonData);
         }
