@@ -24,37 +24,40 @@
             xhr.send();
         }
 
-        // Function to process the response and extract data
-        function processData(data) {
-            // Split the data into lines
-            var lines = data.split("\n");
+/ Function to process the response and extract data
+function processData(data) {
+    // Split the data into lines
+    var lines = data.split("\n");
 
-            // Remove the header and footer lines
-            lines = lines.filter(function(line) {
-                return !line.includes("Symbol|Company Name|NASDAQ Action");
-            });
-            lines = lines.filter(function(line) {
-                return !line.includes("File Creation Time:");
-            });
+    // Remove the header and footer lines
+    lines = lines.filter(function(line) {
+        return !line.includes("Symbol|Company Name|NASDAQ Action");
+    });
+    lines = lines.filter(function(line) {
+        return !line.includes("File Creation Time:");
+    });
 
-            var jsonData = [];
+    var jsonData = [];
 
-            lines.forEach(function(line) {
-                var columns = line.split("|");
-                var symbol = columns[0].trim();
-                var companyName = columns[1].trim();
-                var status = columns[2].trim();
-                jsonData.push({
-                    symbol: symbol,
-                    companyName: companyName,
-                    status: status
-                });
-            });
+    lines.forEach(function(line) {
+        var columns = line.split("|");
 
-            console.log("Parsed JSON data:", jsonData); // Log the parsed JSON data
+        // Ensure each column exists before trimming
+        var symbol = columns[0] ? columns[0].trim() : '';
+        var companyName = columns[1] ? columns[1].trim() : '';
+        var status = columns[2] ? columns[2].trim() : '';
 
-            return jsonData;
-        }
+        jsonData.push({
+            symbol: symbol,
+            companyName: companyName,
+            status: status
+        });
+    });
+
+    console.log("Parsed JSON data:", jsonData); // Log the parsed JSON data
+
+    return jsonData;
+}
 
         // Function to display the data in the UI
 // Function to display the data in the UI
