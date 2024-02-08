@@ -24,7 +24,7 @@
             xhr.send();
         }
 
-/ Function to process the response and extract data
+// Function to process the response and extract data
 function processData(data) {
     // Split the data into lines
     var lines = data.split("\n");
@@ -42,6 +42,8 @@ function processData(data) {
     lines.forEach(function(line) {
         var columns = line.split("|");
 
+        console.log("Columns:", columns); // Log the columns variable
+
         // Ensure each column exists before trimming
         var symbol = columns[0] ? columns[0].trim() : '';
         var companyName = columns[1] ? columns[1].trim() : '';
@@ -58,6 +60,7 @@ function processData(data) {
 
     return jsonData;
 }
+
 
         // Function to display the data in the UI
 // Function to display the data in the UI
