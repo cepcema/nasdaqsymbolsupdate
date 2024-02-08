@@ -24,29 +24,37 @@
             xhr.send();
         }
 
-        // Function to process the response and extract data
-        function processData(data) {
-            // Split the data into lines and filter out empty lines
-            var lines = data.split("\n").filter(line => line.trim() !== "");
+      // Function to process the response and extract data
+function processData(data) {
+    // Split the data into lines
+    var lines = data.split("\n");
 
-            var jsonData = [];
+    // Remove the header and footer lines
+    lines = lines.filter(function(line) {
+        return !line.includes("Symbol|Company Name|NASDAQ Action");
+    });
+    lines = lines.filter(function(line) {
+        return !line.includes("File Creation Time:");
+    });
 
-            lines.forEach(function(line) {
-                var columns = line.split("|");
-                var symbol = columns[0];
-                var companyName = columns[1];
-                var status = columns[2];
-                jsonData.push({
-                    symbol: symbol,
-                    companyName: companyName,
-                    status: status
-                });
-            });
+    var jsonData = [];
 
-            console.log("Parsed JSON data:", jsonData); // Log the parsed JSON data
+    lines.forEach(function(line) {
+        var columns = line.split("|");
+        var symbol = columns[0];
+        var companyName = columns[1];
+        var status = columns[2];
+        jsonData.push({
+            symbol: symbol,
+            companyName: companyName,
+            status: status
+        });
+    });
 
-            return JSON.stringify(jsonData);
-        }
+    console.log("Parsed JSON data:", jsonData); // Log the parsed JSON data
+
+    return JSON.stringify(jsonData);
+}
 
         // URL of the proxy server
         var proxyUrl = "https://api.allorigins.win/raw?url=";
