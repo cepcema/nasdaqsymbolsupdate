@@ -26,49 +26,40 @@
 
         // Function to process the response and extract data
         function processData(data) {
-            var jsonData = JSON.parse(data);
-            displayData(jsonData);
-        }
+            // Split the data into lines and filter out empty lines
+            var lines = data.split("\n").filter(line => line.trim() !== "");
 
-        // Function to display the data in the UI
-        function displayData(data) {
-            var resultsDiv = document.getElementById("results");
+            var jsonData = [];
 
-            // Create a table to display the data
-            var table = document.createElement("table");
-
-            // Create table headers
-            var headers = Object.keys(data[0]);
-            var headerRow = document.createElement("tr");
-            headers.forEach(function(header) {
-                var th = document.createElement("th");
-                th.textContent = header;
-                headerRow.appendChild(th);
-            });
-            table.appendChild(headerRow);
-
-            // Create table rows for each entry in the data
-            data.forEach(function(entry) {
-                var row = document.createElement("tr");
-                headers.forEach(function(header) {
-                    var td = document.createElement("td");
-                    td.textContent = entry[header];
-                    row.appendChild(td);
+            lines.forEach(function(line) {
+                var columns = line.split("|");
+                var symbol = columns[0];
+                var companyName = columns[1];
+                var status = columns[2];
+                jsonData.push({
+                    symbol: symbol,
+                    companyName: companyName,
+                    status: status
                 });
-                table.appendChild(row);
             });
 
-            // Append the table to the results div
-            resultsDiv.appendChild(table);
+            console.log("Parsed JSON data:", jsonData); // Log the parsed JSON data
+
+            return JSON.stringify(jsonData);
         }
 
         // URL of the proxy server
         var proxyUrl = "https://api.allorigins.win/raw?url=";
+
         // URL of the data source
         var url = proxyUrl + encodeURIComponent("http://www.nasdaqtrader.com/dynamic/SymDir/TradingSystemAddsDeletes.txt");
 
         // Make the HTTP request and process the response
-        httpRequest(url, processData);
+        httpRequest(url, function(data) {
+            var jsonData = processData(data);
+            console.log(jsonData);
+            document.getElementById("results").innerText = jsonData;
+        });
     </script>
 </body>
 
