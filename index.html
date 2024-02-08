@@ -44,22 +44,25 @@ function processData(data) {
 
         console.log("Columns:", columns); // Log the columns variable
 
-        // Ensure each column exists before trimming
-        var symbol = columns[0] ? columns[0].trim() : '';
-        var companyName = columns[1] ? columns[1].trim() : '';
-        var status = columns[2] ? columns[2].trim() : '';
+        // Ensure the line has at least three columns before accessing and trimming them
+        if (columns.length >= 3) {
+            var symbol = columns[0].trim();
+            var companyName = columns[1].trim();
+            var status = columns[2].trim();
 
-        jsonData.push({
-            symbol: symbol,
-            companyName: companyName,
-            status: status
-        });
+            jsonData.push({
+                symbol: symbol,
+                companyName: companyName,
+                status: status
+            });
+        }
     });
 
     console.log("Parsed JSON data:", jsonData); // Log the parsed JSON data
 
     return jsonData;
 }
+
 
 
         // Function to display the data in the UI
