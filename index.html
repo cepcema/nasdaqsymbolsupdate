@@ -24,37 +24,51 @@
             xhr.send();
         }
 
-      // Function to process the response and extract data
-function processData(data) {
-    // Split the data into lines
-    var lines = data.split("\n");
+        // Function to process the response and extract data
+        function processData(data) {
+            // Split the data into lines
+            var lines = data.split("\n");
 
-    // Remove the header and footer lines
-    lines = lines.filter(function(line) {
-        return !line.includes("Symbol|Company Name|NASDAQ Action");
-    });
-    lines = lines.filter(function(line) {
-        return !line.includes("File Creation Time:");
-    });
+            // Remove the header and footer lines
+            lines = lines.filter(function(line) {
+                return !line.includes("Symbol|Company Name|NASDAQ Action");
+            });
+            lines = lines.filter(function(line) {
+                return !line.includes("File Creation Time:");
+            });
 
-    var jsonData = [];
+            var jsonData = [];
 
-    lines.forEach(function(line) {
-        var columns = line.split("|");
-        var symbol = columns[0];
-        var companyName = columns[1];
-        var status = columns[2];
-        jsonData.push({
-            symbol: symbol,
-            companyName: companyName,
-            status: status
-        });
-    });
+            lines.forEach(function(line) {
+                var columns = line.split("|");
+                var symbol = columns[0].trim();
+                var companyName = columns[1].trim();
+                var status = columns[2].trim();
+                jsonData.push({
+                    symbol: symbol,
+                    companyName: companyName,
+                    status: status
+                });
+            });
 
-    console.log("Parsed JSON data:", jsonData); // Log the parsed JSON data
+            console.log("Parsed JSON data:", jsonData); // Log the parsed JSON data
 
-    return JSON.stringify(jsonData);
-}
+            return jsonData;
+        }
+
+        // Function to display the data in the UI
+        function displayData(data) {
+            var resultsDiv = document.getElementById("results");
+            resultsDiv.innerHTML = ""; // Clear previous results
+
+            data.forEach(function(item) {
+                var itemDiv = document.createElement("div");
+                itemDiv.innerHTML = "<strong>Symbol:</strong> " + item.symbol + "<br>" +
+                                     "<strong>Company Name:</strong> " + item.companyName + "<br>" +
+                                     "<strong>Status:</strong> " + item.status + "<br><br>";
+                resultsDiv.appendChild(itemDiv);
+            });
+        }
 
         // URL of the proxy server
         var proxyUrl = "https://api.allorigins.win/raw?url=";
@@ -65,8 +79,7 @@ function processData(data) {
         // Make the HTTP request and process the response
         httpRequest(url, function(data) {
             var jsonData = processData(data);
-            console.log(jsonData);
-            document.getElementById("results").innerText = jsonData;
+            displayData(jsonData);
         });
     </script>
 </body>
