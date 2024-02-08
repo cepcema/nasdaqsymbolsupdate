@@ -57,18 +57,12 @@
         }
 
         // Function to display the data in the UI
-        function displayData(data) {
-            var resultsDiv = document.getElementById("results");
-            resultsDiv.innerHTML = ""; // Clear previous results
+// Function to display the data in the UI
+function displayData(data) {
+    var resultsDiv = document.getElementById("results");
+    resultsDiv.innerText = JSON.stringify(data, null, 2); // stringify with indentation for readability
+}
 
-            data.forEach(function(item) {
-                var itemDiv = document.createElement("div");
-                itemDiv.innerHTML = "<strong>Symbol:</strong> " + item.symbol + "<br>" +
-                                     "<strong>Company Name:</strong> " + item.companyName + "<br>" +
-                                     "<strong>Status:</strong> " + item.status + "<br><br>";
-                resultsDiv.appendChild(itemDiv);
-            });
-        }
 
         // URL of the proxy server
         var proxyUrl = "https://api.allorigins.win/raw?url=";
