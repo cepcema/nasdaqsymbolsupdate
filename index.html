@@ -24,54 +24,59 @@
             xhr.send();
         }
 
-// Function to process the response and extract data
-function processData(data) {
-    // Split the data into lines
-    var lines = data.split("\n");
+        // Function to process the response and extract data
+        function processData(data) {
+            // Split the data into lines
+            var lines = data.split("\n");
 
-    // Remove the header and footer lines
-    lines = lines.filter(function(line) {
-        return !line.includes("Symbol|Company Name|NASDAQ Action");
-    });
-    lines = lines.filter(function(line) {
-        return !line.includes("File Creation Time:");
-    });
-
-    var jsonData = [];
-
-    lines.forEach(function(line) {
-        var columns = line.split("|");
-
-        console.log("Columns:", columns); // Log the columns variable
-
-        // Ensure the line has at least three columns before accessing and trimming them
-        if (columns.length >= 3) {
-            var symbol = columns[0].trim();
-            var companyName = columns[1].trim();
-            var status = columns[2].trim();
-
-            jsonData.push({
-                symbol: symbol,
-                companyName: companyName,
-                status: status
+            // Remove the header and footer lines
+            lines = lines.filter(function(line) {
+                return !line.includes("Symbol|Company Name|NASDAQ Action");
             });
+            lines = lines.filter(function(line) {
+                return !line.includes("File Creation Time:");
+            });
+
+            var jsonData = [];
+
+            lines.forEach(function(line) {
+                var columns = line.split("|");
+
+                // Ensure each column exists before trimming
+                var symbol = columns[0] ? columns[0].trim() : '';
+                var companyName = columns[1] ? columns[1].trim() : '';
+                var status = columns[2] ? columns[2].trim() : '';
+
+                jsonData.push({
+                    symbol: symbol,
+                    companyName: companyName,
+                    status: status
+                });
+            });
+
+            console.log("Parsed JSON data:", jsonData); // Log the parsed JSON data
+
+            return jsonData;
         }
-    });
-
-    console.log("Parsed JSON data:", jsonData); // Log the parsed JSON data
-
-    return jsonData;
-}
-
-
 
         // Function to display the data in the UI
-// Function to display the data in the UI
-function displayData(data) {
-    var resultsDiv = document.getElementById("results");
-    resultsDiv.innerText = JSON.stringify(data, null, 2); // stringify with indentation for readability
-}
+        function displayData(data) {
+            var resultsDiv = document.getElementById("results");
+            resultsDiv.innerHTML = ''; // Clear previous content
 
+            // Create a list element
+            var list = document.createElement('ul');
+
+            // Loop through the data and create list items
+            data.forEach(function(item) {
+                var listItem = document.createElement('li');
+                listItem.textContent = JSON.stringify(item);
+                list.appendChild(listItem);
+            });
+
+            // Append the list to the results div
+            resultsDiv.appendChild(list);
+        }
 
         // URL of the proxy server
         var proxyUrl = "https://api.allorigins.win/raw?url=";
