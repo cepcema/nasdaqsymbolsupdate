@@ -1,42 +1,64 @@
 // Import necessary modules
-const fetch = require('node-fetch');
+const XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 
-// Function to make an HTTP request and return parsed JSON data
-async function getData() {
-    try {
-        // URL of the data source
-        const url = "http://www.nasdaqtrader.com/dynamic/SymDir/TradingSystemAddsDeletes.txt";
-        
-        // Fetch data from the URL
-        const response = await fetch(url);
-        
-        // Check if the response is successful
-        if (!response.ok) {
-            throw new Error('Failed to fetch data');
+// Function to make an HTTP request
+function httpRequest(url, callback) {
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            callback(xhr.responseText);
         }
-        
-        // Extract text data from response
-        const data = await response.text();
-        
-        // Split the data into lines
-        const lines = data.trim().split("\n");
-        
-        // Remove header and footer lines
-        const filteredLines = lines.filter(line => !line.includes("Symbol|Company Name|NASDAQ Action") && !line.includes("File Creation Time:"));
-        
-        // Parse each line and create JSON objects
-        const jsonData = filteredLines.map(line => {
-            const [symbol, companyName, status] = line.split("|").map(item => item.trim());
-            return { symbol, companyName, status };
+    };
+    xhr.open("GET", url, true);
+    xhr.send();
+}
+
+// Function to process the response and extract data
+function processData(data) {
+    // Split the data into lines
+    var lines = data.split("\n");
+
+    // Remove the header and footer lines
+    lines = lines.filter(function(line) {
+        return !line.includes("Symbol|Company Name|NASDAQ Action");
+    });
+    lines = lines.filter(function(line) {
+        return !line.includes("File Creation Time:");
+    });
+
+    var jsonData = [];
+
+    lines.forEach(function(line) {
+        var columns = line.split("|");
+
+        // Ensure each column exists before trimming
+        var symbol = columns[0] ? columns[0].trim() : '';
+        var companyName = columns[1] ? columns[1].trim() : '';
+        var status = columns[2] ? columns[2].trim() : '';
+
+        jsonData.push({
+            symbol: symbol,
+            companyName: companyName,
+            status: status
         });
-        
-        // Return the parsed JSON data
-        return jsonData;
-    } catch (error) {
-        // Handle errors
-        console.error('Error:', error.message);
-        return null;
-    }
+    });
+
+    return jsonData;
+}
+
+// Define the function to retrieve and return parsed JSON data
+function getData(callback) {
+    // URL of the proxy server
+    var proxyUrl = "https://api.allorigins.win/raw?url=";
+
+    // URL of the data source
+    var url = proxyUrl + encodeURIComponent("http://www.nasdaqtrader.com/dynamic/SymDir/TradingSystemAddsDeletes.txt");
+
+    // Make the HTTP request and process the response
+    httpRequest(url, function(data) {
+        var jsonData = processData(data);
+        callback(jsonData);
+    });
 }
 
 // Export the function to be used as an API endpoint
