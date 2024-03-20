@@ -1,3 +1,3 @@
 [build]
-  command = "gunicorn -b 0.0.0.0:$PORT script:application"
+  command = "gunicorn -b 0.0.0.0:8080 script:application"
   publish = ""
