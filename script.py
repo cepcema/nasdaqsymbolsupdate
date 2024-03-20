@@ -40,5 +40,12 @@ def scrape_data():
     else:
         return jsonify({"error": "Failed to fetch the webpage"}), 500
 
+# Entry point for WSGI server
+def create_app():
+    return app
+
+# This is needed for Gunicorn to work properly
+application = create_app()
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    application.run()
